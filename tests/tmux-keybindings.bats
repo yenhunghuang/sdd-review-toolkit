@@ -49,45 +49,49 @@ teardown() {
     assert_output --partial "sdd-tree"
 }
 
+@test "tmux config: prefix + L binds sdd-last" {
+    run grep 'bind-key L' "$TMUX_CONF"
+    assert_success
+    assert_output --partial "sdd-last"
+}
+
+@test "tmux config: prefix + P binds sdd-peek" {
+    run grep 'bind-key P' "$TMUX_CONF"
+    assert_success
+    assert_output --partial "sdd-peek"
+}
+
 @test "tmux config: prefix + E opens VS Code" {
     run grep 'bind-key E' "$TMUX_CONF"
     assert_success
-    assert_output --partial "code ."
+    assert_output --partial "code"
 }
 
-# --- split directions ---
+# --- all use split-window (except E) ---
 
-@test "tmux config: R/S/D use horizontal split" {
-    for key in R S D; do
+@test "tmux config: all review keys use split-window" {
+    for key in R S D W T L P; do
         run grep "bind-key $key" "$TMUX_CONF"
-        assert_output --partial "split-window -h"
+        assert_output --partial "split-window"
     done
 }
 
-@test "tmux config: W/T use vertical split" {
-    for key in W T; do
+# --- pane direction and size ---
+
+@test "tmux config: all splits are horizontal right 55%" {
+    for key in R S D W T L P; do
         run grep "bind-key $key" "$TMUX_CONF"
-        assert_output --partial "split-window -v"
+        assert_output --partial "split-window -h -l 55%"
     done
 }
 
-# --- pane sizes ---
+# --- working directory ---
 
-@test "tmux config: R/S/D split at 55%" {
-    for key in R S D; do
+@test "tmux config: splits inherit pane_current_path" {
+    for key in R S D W T L P; do
         run grep "bind-key $key" "$TMUX_CONF"
-        assert_output --partial "-p 55"
+        assert_output --partial "pane_current_path"
     done
-}
-
-@test "tmux config: W splits at 40%" {
-    run grep 'bind-key W' "$TMUX_CONF"
-    assert_output --partial "-p 40"
-}
-
-@test "tmux config: T splits at 30%" {
-    run grep 'bind-key T' "$TMUX_CONF"
-    assert_output --partial "-p 30"
 }
 
 # --- bash -ic for function availability ---
@@ -95,6 +99,5 @@ teardown() {
 @test "tmux config: uses bash -ic for interactive shell" {
     run grep -c 'bash -ic' "$TMUX_CONF"
     assert_success
-    # R, S, D, W, T = 5 bindings using bash -ic
-    [[ "${output}" -ge 5 ]]
+    [[ "${output}" -ge 7 ]]
 }

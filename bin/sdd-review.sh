@@ -41,7 +41,9 @@ sdd-review() {
         --preview-window 'right:60%:wrap' \
         --bind "ctrl-e:execute-silent(code {})" \
         --bind "ctrl-y:execute-silent(bash -c '. \"$helpers\" && printf \"%s\" \"\$1\" | _sdd_clipboard' _ {})" \
-        --header 'ENTER: view | Ctrl+E: VS Code | Ctrl+Y: copy path')
+        --bind "ctrl-/:toggle-preview" \
+        --bind "ctrl-p:execute(tmux display-popup -w 80% -h 80% \"glow -p {}\" 2>/dev/null || glow -p {})" \
+        --header 'ENTER: view | Ctrl+E: VS Code | Ctrl+Y: copy | Ctrl+/: toggle | Ctrl+P: popup')
 
     if [[ -n "$selected" ]]; then
         _sdd_glow_render "$selected"

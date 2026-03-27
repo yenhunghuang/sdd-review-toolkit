@@ -104,3 +104,15 @@ EOF
     assert_success
     assert_output --partial "CWD File"
 }
+
+# --- fzf keybinding tests ---
+
+@test "sdd-review: has ctrl-/ toggle-preview binding" {
+    run type sdd-review
+    assert_output --partial "ctrl-/:toggle-preview"
+}
+
+@test "sdd-review: has ctrl-p popup preview binding" {
+    run type sdd-review
+    assert_output --partial "ctrl-p:execute"
+}
