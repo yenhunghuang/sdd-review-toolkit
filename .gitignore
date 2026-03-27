@@ -1,0 +1,6 @@
+tests/test_helper/bats-core/
+tests/test_helper/bats-support/
+tests/test_helper/bats-assert/
+*.swp
+*.swo
+.env
